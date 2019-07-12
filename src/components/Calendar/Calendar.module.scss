@@ -9,9 +9,15 @@
     .yearContainer {
         justify-content: center;
         font-size: 1.2rem;
-        background: #223148;
+        background: $blueDark;
         color: white;
         padding: 5px;
+        button {
+            color: white;
+        }
+        .monthTitle {
+            margin: 0 1rem;
+        }
     }
     .monthHead {
         color: white;

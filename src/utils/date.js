@@ -3,7 +3,8 @@ import moment from "moment";
 export function getFirstDayOfTheMonth(date) {
     const firstDay = moment(date)
         .startOf("month")
-        .format("DD");
+        .format("d");
+    console.log(firstDay)
     return firstDay;
 }
 
@@ -29,7 +30,12 @@ export function getWeekDays() {
     return weekDays;
 }
 
+export function getMonthAndYear(date) {
+    return moment(date).format("MMMM YYYY")
+}
+
 export function getDaysInMonth(date) {
     const daysInMonth = moment(date).daysInMonth();
+
     return daysInMonth;
 }

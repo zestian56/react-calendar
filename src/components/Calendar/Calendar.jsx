@@ -1,46 +1,58 @@
-import React, { useState } from "react";
-import moment from "moment";
+import React from "react";
+import PropTypes from "prop-types";
 import clsx from "clsx";
+import moment from "moment";
+import { Icon, Button } from "antd";
 
-import classes from "./Calendar.module.scss";
 import {
   getWeekDays,
   getFirstDayOfTheMonth,
   getDaysInMonth,
   getDayOfLastMonthFromLast,
-  getDayOfNextMonthFromStart
+  getDayOfNextMonthFromStart,
+  getMonthAndYear
 } from "../../utils/date";
 
-const TOTAL_GRID_SLOTS = 35;
+import classes from "./Calendar.module.scss";
 
-export default function Calendar() {
-  const [dateObject, setDateObject] = useState(moment());
+const TOTAL_WEEK_DAYS = 7;
 
+function Calendar(props) {
+  const { activeDate, onNextClick, onBackClick } = props;
   const lastMonthDays = [];
   const daysInMonth = [];
   const nextMonthDays = [];
+  const firstDayOfTheMonth = getFirstDayOfTheMonth(activeDate);
 
-  for (let i = 0; i < getFirstDayOfTheMonth(dateObject); i++) {
+  for (let i = 0; i < firstDayOfTheMonth; i++) {
     lastMonthDays.push(
-      <div className={clsx(classes.monthCol, classes.notInMonthCol)} key={i}>
-        {getDayOfLastMonthFromLast(dateObject, i)}
+      <div
+        className={clsx(classes.monthCol, classes.notInMonthCol)}
+        key={`last-month-${i}`}
+      >
+        {getDayOfLastMonthFromLast(activeDate, firstDayOfTheMonth - i - 1)}
       </div>
     );
   }
-  for (let i = 1; i < getDaysInMonth(dateObject); i++) {
+
+  for (let i = 1; i <= getDaysInMonth(activeDate); i++) {
     daysInMonth.push(
-      <div className={clsx(classes.monthCol)} key={i} monthColBg>
+      <div className={clsx(classes.monthCol)} key={`current-month-${i}`}>
         {i}
       </div>
     );
   }
   let totalDays = [...lastMonthDays, ...daysInMonth];
 
-  if (totalDays.length < TOTAL_GRID_SLOTS) {
-    for (let i = 0; i < TOTAL_GRID_SLOTS - totalDays.length; i++) {
+  if (totalDays.length % TOTAL_WEEK_DAYS !== 0) {
+    const numberOfWeeks = Math.ceil(totalDays.length / 7);
+    for (let i = 0; i < numberOfWeeks * 7 - totalDays.length; i++) {
       nextMonthDays.push(
-        <div className={clsx(classes.monthCol, classes.notInMonthCol)}>
-          {getDayOfNextMonthFromStart(dateObject, i)}
+        <div
+          className={clsx(classes.monthCol, classes.notInMonthCol)}
+          key={`next-month-${i}`}
+        >
+          {getDayOfNextMonthFromStart(activeDate, i)}
         </div>
       );
     }
@@ -51,9 +63,9 @@ export default function Calendar() {
   let cols = [];
 
   totalDays.forEach((day, i) => {
-    if (i % 7 === 0 && i !== totalDays.length - 1 && i !== 0) {
+    if (i % TOTAL_WEEK_DAYS === 0 && i !== totalDays.length - 1 && i !== 0) {
       rows.push(
-        <div className={classes.monthRow}>
+        <div className={classes.monthRow} key={`row-${rows.length}`}>
           <div className={classes.monthRowBg}> {cols}</div>
           <div className={classes.monthRowContent}>{cols} </div>
         </div>
@@ -65,7 +77,7 @@ export default function Calendar() {
     }
     if (i === totalDays.length - 1) {
       rows.push(
-        <div className={classes.monthRow}>
+        <div className={classes.monthRow} key={`row-${rows.length}`}>
           <div className={classes.monthRowBg}> {cols}</div>
           <div className={classes.monthRowContent}>{cols} </div>
         </div>
@@ -76,7 +88,17 @@ export default function Calendar() {
   return (
     <div className={classes.root}>
       <div className={clsx("row", classes.yearContainer)}>
-        <div>{dateObject.format("MMMM YYYY")}</div>
+        <div>
+          <Button type="link" size="default" onClick={onBackClick}>
+            <Icon type="left" />
+          </Button>
+          <span className={classes.monthTitle}>
+            {getMonthAndYear(activeDate)}
+          </span>
+          <Button type="link" size="default" onClick={onNextClick}>
+            <Icon type="right" />
+          </Button>
+        </div>
       </div>
       <div className={clsx("row", classes.monthHead)}>
         {getWeekDays().map(weekDay => (
@@ -89,3 +111,20 @@ export default function Calendar() {
     </div>
   );
 }
+
+Calendar.propTypes = {
+  activeDate: PropTypes.oneOfType([
+    PropTypes.instanceOf(moment),
+    PropTypes.instanceOf(Date)
+  ]),
+  onNextClick: PropTypes.func,
+  onBackClick: PropTypes.func
+};
+
+Calendar.defaultProps = {
+  activeDate: moment(),
+  onNextClick: () => {},
+  onBackClick: () => {}
+};
+
+export default Calendar;
