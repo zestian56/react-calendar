@@ -4,7 +4,6 @@ export function getFirstDayOfTheMonth(date) {
     const firstDay = moment(date)
         .startOf("month")
         .format("d");
-    console.log(firstDay)
     return firstDay;
 }
 
@@ -13,7 +12,6 @@ export function getDayOfLastMonthFromLast(date, indexToSubstract) {
         .subtract(1, "months")
         .endOf("month")
         .subtract(indexToSubstract, "days")
-        .format("DD");
     return day;
 }
 export function getDayOfNextMonthFromStart(date, indexToAdd) {
@@ -21,7 +19,6 @@ export function getDayOfNextMonthFromStart(date, indexToAdd) {
         .add(1, "months")
         .startOf("month")
         .add(indexToAdd, "days")
-        .format("D");
     return day;
 }
 
@@ -36,6 +33,10 @@ export function getMonthAndYear(date) {
 
 export function getDaysInMonth(date) {
     const daysInMonth = moment(date).daysInMonth();
-
     return daysInMonth;
+}
+
+export function getDayInMonth(date, dayIndex) {
+    const dayInMonth = moment(date).startOf("month").add(dayIndex, "days");
+    return dayInMonth;
 }

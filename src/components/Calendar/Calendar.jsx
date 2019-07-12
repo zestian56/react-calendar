@@ -10,35 +10,71 @@ import {
   getDaysInMonth,
   getDayOfLastMonthFromLast,
   getDayOfNextMonthFromStart,
-  getMonthAndYear
+  getMonthAndYear,
+  getDayInMonth
 } from "../../utils/date";
 
 import classes from "./Calendar.module.scss";
 
+function findReminderInDay(day, reminders) {
+  return reminders.filter(r => {
+    return day.isSame(moment(r.date, "DD-MM-YY"));
+  });
+}
+
 const TOTAL_WEEK_DAYS = 7;
 
 function Calendar(props) {
-  const { activeDate, onNextClick, onBackClick } = props;
+  const { activeDate, onNextClick, onBackClick, reminders } = props;
+
   const lastMonthDays = [];
   const daysInMonth = [];
+  const remindersInCalendar = [];
   const nextMonthDays = [];
   const firstDayOfTheMonth = getFirstDayOfTheMonth(activeDate);
 
+  function getReminderCol(dayReminders) {
+    return (
+      <div className={clsx(classes.monthCol, classes.reminderCol)} >
+        {dayReminders.map((r, rKey) => (
+          <div
+            className={clsx(classes.reminder)}
+            style={{ backgroundColor: r.color }}
+            key={`reminders-${rKey}`}
+          >
+            {r.text}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   for (let i = 0; i < firstDayOfTheMonth; i++) {
+    const dayInLastMonth = getDayOfLastMonthFromLast(
+      activeDate,
+      firstDayOfTheMonth - i - 1
+    );
+    const dayReminders = findReminderInDay(dayInLastMonth, reminders);
+    remindersInCalendar.push(getReminderCol(dayReminders));
+
     lastMonthDays.push(
       <div
         className={clsx(classes.monthCol, classes.notInMonthCol)}
         key={`last-month-${i}`}
       >
-        {getDayOfLastMonthFromLast(activeDate, firstDayOfTheMonth - i - 1)}
+        {dayInLastMonth.format("DD")}
       </div>
     );
   }
 
-  for (let i = 1; i <= getDaysInMonth(activeDate); i++) {
+  for (let i = 0; i < getDaysInMonth(activeDate); i++) {
+    const dayInMonth = getDayInMonth(activeDate, i);
+    const dayReminders = findReminderInDay(dayInMonth, reminders);
+    remindersInCalendar.push(getReminderCol(dayReminders));
+
     daysInMonth.push(
       <div className={clsx(classes.monthCol)} key={`current-month-${i}`}>
-        {i}
+        {dayInMonth.format("D")}
       </div>
     );
   }
@@ -47,12 +83,16 @@ function Calendar(props) {
   if (totalDays.length % TOTAL_WEEK_DAYS !== 0) {
     const numberOfWeeks = Math.ceil(totalDays.length / 7);
     for (let i = 0; i < numberOfWeeks * 7 - totalDays.length; i++) {
+      const dayOfNextMonth = getDayOfNextMonthFromStart(activeDate, i);
+      const dayReminders = findReminderInDay(dayOfNextMonth, reminders);
+
+      remindersInCalendar.push(getReminderCol(dayReminders));
       nextMonthDays.push(
         <div
           className={clsx(classes.monthCol, classes.notInMonthCol)}
           key={`next-month-${i}`}
         >
-          {getDayOfNextMonthFromStart(activeDate, i)}
+          {dayOfNextMonth.format("D")}
         </div>
       );
     }
@@ -61,25 +101,29 @@ function Calendar(props) {
 
   let rows = [];
   let cols = [];
+  let reminderCols = []
 
   totalDays.forEach((day, i) => {
-    if (i % TOTAL_WEEK_DAYS === 0 && i !== totalDays.length - 1 && i !== 0) {
+    if (i % TOTAL_WEEK_DAYS === 0 && i !== 0) {
       rows.push(
         <div className={classes.monthRow} key={`row-${rows.length}`}>
           <div className={classes.monthRowBg}> {cols}</div>
-          <div className={classes.monthRowContent}>{cols} </div>
+          <div className={classes.monthRowContent}>{reminderCols} </div>
         </div>
       );
       cols = [];
+      reminderCols = [];
+      reminderCols.push(remindersInCalendar[i])
       cols.push(day);
     } else {
       cols.push(day);
+      reminderCols.push(remindersInCalendar[i])
     }
     if (i === totalDays.length - 1) {
       rows.push(
         <div className={classes.monthRow} key={`row-${rows.length}`}>
           <div className={classes.monthRowBg}> {cols}</div>
-          <div className={classes.monthRowContent}>{cols} </div>
+          <div className={classes.monthRowContent}>{reminderCols} </div>
         </div>
       );
     }
