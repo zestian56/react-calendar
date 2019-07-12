@@ -27,15 +27,13 @@ const TOTAL_WEEK_DAYS = 7;
 function Calendar(props) {
   const { activeDate, onNextClick, onBackClick, reminders } = props;
 
-  const lastMonthDays = [];
-  const daysInMonth = [];
   const remindersInCalendar = [];
-  const nextMonthDays = [];
+  const daysInCalendar = [];
   const firstDayOfTheMonth = getFirstDayOfTheMonth(activeDate);
 
-  function getReminderCol(dayReminders) {
+  function getReminderCol(dayReminders,day,key) {
     return (
-      <div className={clsx(classes.monthCol, classes.reminderCol)} >
+      <div className={clsx(classes.monthCol, classes.reminderCol)} key={`reminder-${day.format("DD-MM")}-${key}`}>
         {dayReminders.map((r, rKey) => (
           <div
             className={clsx(classes.reminder)}
@@ -48,6 +46,16 @@ function Calendar(props) {
       </div>
     );
   }
+  function getDayCol(day,className ="") {
+    return (
+      <div
+        className={clsx(classes.monthCol, className)}
+        key={`col-${day.format("DD-MM-YY")}`}
+      >
+        {day.format("D")}
+      </div>
+    );
+  }
 
   for (let i = 0; i < firstDayOfTheMonth; i++) {
     const dayInLastMonth = getDayOfLastMonthFromLast(
@@ -55,55 +63,34 @@ function Calendar(props) {
       firstDayOfTheMonth - i - 1
     );
     const dayReminders = findReminderInDay(dayInLastMonth, reminders);
-    remindersInCalendar.push(getReminderCol(dayReminders));
-
-    lastMonthDays.push(
-      <div
-        className={clsx(classes.monthCol, classes.notInMonthCol)}
-        key={`last-month-${i}`}
-      >
-        {dayInLastMonth.format("DD")}
-      </div>
-    );
+    remindersInCalendar.push(getReminderCol(dayReminders,dayInLastMonth,i));
+    daysInCalendar.push(getDayCol(dayInLastMonth,classes.notInMonthCol));
   }
 
   for (let i = 0; i < getDaysInMonth(activeDate); i++) {
     const dayInMonth = getDayInMonth(activeDate, i);
     const dayReminders = findReminderInDay(dayInMonth, reminders);
-    remindersInCalendar.push(getReminderCol(dayReminders));
 
-    daysInMonth.push(
-      <div className={clsx(classes.monthCol)} key={`current-month-${i}`}>
-        {dayInMonth.format("D")}
-      </div>
-    );
+    remindersInCalendar.push(getReminderCol(dayReminders,dayInMonth,i));
+    daysInCalendar.push(getDayCol(dayInMonth));
   }
-  let totalDays = [...lastMonthDays, ...daysInMonth];
 
-  if (totalDays.length % TOTAL_WEEK_DAYS !== 0) {
-    const numberOfWeeks = Math.ceil(totalDays.length / 7);
-    for (let i = 0; i < numberOfWeeks * 7 - totalDays.length; i++) {
+  if (daysInCalendar.length % TOTAL_WEEK_DAYS !== 0) {
+    const numberOfWeeks = Math.ceil(daysInCalendar.length / 7);
+    const length = daysInCalendar.length;
+    for (let i = 0; i < numberOfWeeks * 7 - length; i++) {
       const dayOfNextMonth = getDayOfNextMonthFromStart(activeDate, i);
       const dayReminders = findReminderInDay(dayOfNextMonth, reminders);
-
-      remindersInCalendar.push(getReminderCol(dayReminders));
-      nextMonthDays.push(
-        <div
-          className={clsx(classes.monthCol, classes.notInMonthCol)}
-          key={`next-month-${i}`}
-        >
-          {dayOfNextMonth.format("D")}
-        </div>
-      );
+      remindersInCalendar.push(getReminderCol(dayReminders,dayOfNextMonth,i));
+      daysInCalendar.push(getDayCol(dayOfNextMonth,classes.notInMonthCol));
     }
-    totalDays = [...totalDays, ...nextMonthDays];
   }
 
   let rows = [];
   let cols = [];
-  let reminderCols = []
+  let reminderCols = [];
 
-  totalDays.forEach((day, i) => {
+  daysInCalendar.forEach((day, i) => {
     if (i % TOTAL_WEEK_DAYS === 0 && i !== 0) {
       rows.push(
         <div className={classes.monthRow} key={`row-${rows.length}`}>
@@ -113,13 +100,13 @@ function Calendar(props) {
       );
       cols = [];
       reminderCols = [];
-      reminderCols.push(remindersInCalendar[i])
+      reminderCols.push(remindersInCalendar[i]);
       cols.push(day);
     } else {
       cols.push(day);
-      reminderCols.push(remindersInCalendar[i])
+      reminderCols.push(remindersInCalendar[i]);
     }
-    if (i === totalDays.length - 1) {
+    if (i === daysInCalendar.length - 1) {
       rows.push(
         <div className={classes.monthRow} key={`row-${rows.length}`}>
           <div className={classes.monthRowBg}> {cols}</div>
