@@ -75,7 +75,9 @@ export default function Calendar() {
 
   return (
     <div className={classes.root}>
-      <div className={clsx("row", classes.yearContainer)}>s</div>
+      <div className={clsx("row", classes.yearContainer)}>
+        <div>{dateObject.format("MMMM YYYY")}</div>
+      </div>
       <div className={clsx("row", classes.monthHead)}>
         {getWeekDays().map(weekDay => (
           <div key={weekDay} className={classes.weekdayCol}>

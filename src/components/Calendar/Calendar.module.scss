@@ -6,6 +6,13 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    .yearContainer {
+        justify-content: center;
+        font-size: 1.2rem;
+        background: #223148;
+        color: white;
+        padding: 5px;
+    }
     .monthHead {
         color: white;
         .weekdayCol {
