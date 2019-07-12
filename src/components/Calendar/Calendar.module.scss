@@ -50,6 +50,7 @@
             flex-grow: 1;
             flex-basis: 100px;
             flex-shrink: 0;
+            overflow: hidden;
             .monthCol {
                 -ms-flex: 1 0;
                 flex: 1 0;
@@ -83,10 +84,11 @@
         .monthRowContent {
             flex: 1 0;
             width: 100%;
+            margin-top: 25px;
+            max-height: calc(100% - 25px);
             display: flex;
             position: relative;
             z-index: 4;
-            margin-top: 25px;
             padding-bottom: 10px;
             .reminderCol {
                 max-height: 100%;

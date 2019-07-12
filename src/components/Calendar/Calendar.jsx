@@ -31,9 +31,12 @@ function Calendar(props) {
   const daysInCalendar = [];
   const firstDayOfTheMonth = getFirstDayOfTheMonth(activeDate);
 
-  function getReminderCol(dayReminders,day,key) {
+  function getReminderCol(dayReminders, day, key) {
     return (
-      <div className={clsx(classes.monthCol, classes.reminderCol)} key={`reminder-${day.format("DD-MM")}-${key}`}>
+      <div
+        className={clsx(classes.monthCol, classes.reminderCol)}
+        key={`reminder-${day.format("DD-MM")}-${key}`}
+      >
         {dayReminders.map((r, rKey) => (
           <div
             className={clsx(classes.reminder)}
@@ -46,7 +49,7 @@ function Calendar(props) {
       </div>
     );
   }
-  function getDayCol(day,className ="") {
+  function getDayCol(day, className = "") {
     return (
       <div
         className={clsx(classes.monthCol, className)}
@@ -63,15 +66,15 @@ function Calendar(props) {
       firstDayOfTheMonth - i - 1
     );
     const dayReminders = findReminderInDay(dayInLastMonth, reminders);
-    remindersInCalendar.push(getReminderCol(dayReminders,dayInLastMonth,i));
-    daysInCalendar.push(getDayCol(dayInLastMonth,classes.notInMonthCol));
+    remindersInCalendar.push(getReminderCol(dayReminders, dayInLastMonth, i));
+    daysInCalendar.push(getDayCol(dayInLastMonth, classes.notInMonthCol));
   }
 
   for (let i = 0; i < getDaysInMonth(activeDate); i++) {
     const dayInMonth = getDayInMonth(activeDate, i);
     const dayReminders = findReminderInDay(dayInMonth, reminders);
 
-    remindersInCalendar.push(getReminderCol(dayReminders,dayInMonth,i));
+    remindersInCalendar.push(getReminderCol(dayReminders, dayInMonth, i));
     daysInCalendar.push(getDayCol(dayInMonth));
   }
 
@@ -81,8 +84,8 @@ function Calendar(props) {
     for (let i = 0; i < numberOfWeeks * 7 - length; i++) {
       const dayOfNextMonth = getDayOfNextMonthFromStart(activeDate, i);
       const dayReminders = findReminderInDay(dayOfNextMonth, reminders);
-      remindersInCalendar.push(getReminderCol(dayReminders,dayOfNextMonth,i));
-      daysInCalendar.push(getDayCol(dayOfNextMonth,classes.notInMonthCol));
+      remindersInCalendar.push(getReminderCol(dayReminders, dayOfNextMonth, i));
+      daysInCalendar.push(getDayCol(dayOfNextMonth, classes.notInMonthCol));
     }
   }
 
@@ -149,13 +152,28 @@ Calendar.propTypes = {
     PropTypes.instanceOf(Date)
   ]),
   onNextClick: PropTypes.func,
-  onBackClick: PropTypes.func
+  onBackClick: PropTypes.func,
+  reminders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      date: PropTypes.string,
+      hour: PropTypes.string,
+      color: PropTypes.string,
+      city: PropTypes.string,
+      text: PropTypes.string
+    })
+  ),
+  onEventClick: PropTypes.func,
+  onAddEvent: PropTypes.func
 };
 
 Calendar.defaultProps = {
   activeDate: moment(),
+  reminders: [],
   onNextClick: () => {},
-  onBackClick: () => {}
+  onBackClick: () => {},
+  onEventClick: () => {},
+  onAddEvent: () => {},
 };
 
 export default Calendar;
