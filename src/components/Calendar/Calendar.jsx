@@ -25,7 +25,14 @@ function findReminderInDay(day, reminders) {
 const TOTAL_WEEK_DAYS = 7;
 
 function Calendar(props) {
-  const { activeDate, onNextClick, onBackClick, reminders } = props;
+  const {
+    activeDate,
+    onNextClick,
+    onBackClick,
+    reminders,
+    onAddReminder,
+    onReminderClick
+  } = props;
 
   const remindersInCalendar = [];
   const daysInCalendar = [];
@@ -42,6 +49,7 @@ function Calendar(props) {
             className={clsx(classes.reminder)}
             style={{ backgroundColor: r.color }}
             key={`reminders-${rKey}`}
+            onClick={() => onReminderClick(r)}
           >
             {r.text}
           </div>
@@ -54,6 +62,7 @@ function Calendar(props) {
       <div
         className={clsx(classes.monthCol, className)}
         key={`col-${day.format("DD-MM-YY")}`}
+        onClick={() => onAddReminder(day)}
       >
         {day.format("D")}
       </div>
@@ -163,8 +172,8 @@ Calendar.propTypes = {
       text: PropTypes.string
     })
   ),
-  onEventClick: PropTypes.func,
-  onAddEvent: PropTypes.func
+  onReminderClick: PropTypes.func,
+  onAddReminder: PropTypes.func
 };
 
 Calendar.defaultProps = {
@@ -172,8 +181,8 @@ Calendar.defaultProps = {
   reminders: [],
   onNextClick: () => {},
   onBackClick: () => {},
-  onEventClick: () => {},
-  onAddEvent: () => {},
+  onReminderClick: () => {},
+  onAddReminder: () => {}
 };
 
 export default Calendar;

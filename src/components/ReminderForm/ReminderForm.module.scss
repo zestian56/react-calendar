@@ -1,0 +1,30 @@
+.root {
+    width: 100%;
+    .formSection {
+        display: flex;
+        width: 100%;
+        &>:last-child {
+            margin-left: 10px;
+        }
+        .select {
+            flex-basis: 50%;
+            flex-shrink: 1;
+            padding-right: 23px;
+        }
+    }
+    .colorContainer {
+        margin-bottom: 34px;
+        padding-left: 5px;
+        .color {
+            justify-content: space-around;
+        }
+    }
+    .formFooter {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        .cancelButton {
+            margin-right: 10px;
+        }
+    }
+}

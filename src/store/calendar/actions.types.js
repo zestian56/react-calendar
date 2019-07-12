@@ -1,7 +1,14 @@
 const CHANGE_ACTIVE_DATE = "CHANGE_ACTIVE_DATE";
 
+const ADD_REMINDER = "ADD_REMINDER";
+const DELETE_REMINDER = "DELETE_REMINDER";
+const EDIT_REMINDER = "EDIT_REMINDER";
+
 const calendarActionTypes = {
-    CHANGE_ACTIVE_DATE
+    CHANGE_ACTIVE_DATE,
+    ADD_REMINDER,
+    DELETE_REMINDER,
+    EDIT_REMINDER
 };
 
 export default calendarActionTypes;
