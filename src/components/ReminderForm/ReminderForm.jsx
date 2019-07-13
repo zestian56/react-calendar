@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import classes from "./ReminderForm.module.scss";
@@ -23,8 +23,12 @@ function ReminderForm(props) {
     onCancelClick,
     onDeleteClick,
     onSubmit,
-    form: { getFieldDecorator, validateFieldsAndScroll }
+    form: { getFieldDecorator, validateFieldsAndScroll, resetFields }
   } = props;
+
+  useEffect(() => {
+    resetFields();
+  }, [reminder, resetFields]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -57,7 +61,7 @@ function ReminderForm(props) {
       <Form.Item>
         {getFieldDecorator("text", {
           initialValue: reminder.text || "",
-          rules: [{ required: true, message: "Please input your Password!" }]
+          rules: [{ required: true, message: "Please write a description!" },{max: 30, message: "Description cant be longer than 30 characters"}]
         })(<Input type="text" placeholder="Description" />)}
       </Form.Item>
       <div className={classes.formSection}>
@@ -85,7 +89,7 @@ function ReminderForm(props) {
             initialValue: reminder.color || "#f44336",
             getValueFromEvent: color => color.hex,
             valuePropName: "color",
-            rules: [{ required: true, message: "Please select a City!" }]
+            rules: [{ required: true, message: "Please select a color!" }]
           })(
             <CirclePicker
               className={classes.color}
@@ -130,10 +134,13 @@ function ReminderForm(props) {
 
 ReminderForm.propTypes = {
   reminder: PropTypes.any,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func.isRequired,
+  onDeleteClick: PropTypes.func
 };
 ReminderForm.defaultProps = {
-  reminder: {}
+  reminder: {},
+  onDeleteClick: () => {}
 };
 
 export default Form.create({ name: "reminder-form" })(ReminderForm);

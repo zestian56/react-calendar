@@ -6,11 +6,16 @@ import Calendar from "../../components/Calendar/Calendar";
 import { calendarActions } from "../../store/calendar";
 import { Modal } from "antd";
 import ReminderForm from "../../components/ReminderForm/ReminderForm";
+import {
+  addReminder,
+  editReminder,
+  deleteReminder
+} from "../../store/calendar/actions";
 
 export default function CalendarHandler() {
   const { activeDate, reminders } = useSelector(state => state.calendar);
   const [showReminderModal, setShowReminderModal] = useState(false);
-  const [activeReminder, setActiveReminder] = useState(undefined);
+  const [activeReminder, setActiveReminder] = useState({});
   const dispatch = useDispatch();
 
   function handleNext() {
@@ -40,8 +45,8 @@ export default function CalendarHandler() {
   }
 
   function handleReminderFormSubmit(values) {
-    console.log(values);
     const newReminder = {
+      ...activeReminder,
       ...values,
       date: values.date.format("DD-MM-YY"),
       hour: values.hour.format("HH:mm:ss")
@@ -49,7 +54,17 @@ export default function CalendarHandler() {
     const isNew = newReminder.new;
     delete newReminder.new;
     if (isNew) {
+      dispatch(addReminder(newReminder));
+    } else {
+      dispatch(editReminder(newReminder));
     }
+    handleCancelModal();
+  }
+
+  function handleReminderDelete() {
+    dispatch(deleteReminder(activeReminder.id));
+    setActiveReminder({});
+    handleCancelModal();
   }
 
   return (
@@ -65,12 +80,14 @@ export default function CalendarHandler() {
       <Modal
         centered
         visible={showReminderModal}
-        title={activeReminder ? "Edit reminder" : "New Reminder"}
+        title={activeReminder.new ? "New Reminder" : "Edit reminder"}
         footer={null}
         onCancel={handleCancelModal}
       >
         <ReminderForm
           reminder={activeReminder}
+          onDeleteClick={handleReminderDelete}
+          onCancelClick={handleCancelModal}
           onSubmit={handleReminderFormSubmit}
         />
       </Modal>
