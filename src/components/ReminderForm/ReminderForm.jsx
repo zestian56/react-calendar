@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import classes from "./ReminderForm.module.scss";
@@ -6,29 +6,11 @@ import { Form, Input, Button, DatePicker, TimePicker, Select } from "antd";
 import { CirclePicker } from "react-color";
 import moment from "moment";
 
-const cities = [
-  {
-    value: "cali",
-    label: "Cali"
-  },
-  {
-    value: "jamundi",
-    label: "Jamundi"
-  },
-  {
-    value: "palmira",
-    label: "Palmira"
-  },
+import citiesJSON from "../../constants/data/city.list.min.json";
+import WeatherService from "../../services/WeatherService";
 
-  {
-    value: "medellin",
-    label: "Medellín"
-  },
-  {
-    value: "bogota",
-    label: "Bogóta"
-  }
-];
+const cities = citiesJSON.map(cty => ({ label: cty.name, value: cty.id }));
+const weatherService = new WeatherService();
 
 function ReminderForm(props) {
   const {
@@ -36,12 +18,39 @@ function ReminderForm(props) {
     onCancelClick,
     onDeleteClick,
     onSubmit,
-    form: { getFieldDecorator, validateFieldsAndScroll, resetFields }
+    form: {
+      getFieldDecorator,
+      validateFieldsAndScroll,
+      resetFields,
+      getFieldValue
+    }
   } = props;
+
+  const [todayWeather, setTodayWeather] = useState(undefined);
+  const city = getFieldValue("city");
+  const date = getFieldValue("date");
 
   useEffect(() => {
     resetFields();
   }, [reminder, resetFields]);
+
+  useEffect(() => {
+    async function fecthWeather() {
+      if (city && date) {
+        const actualDate = moment();
+        const isActualDay = actualDate.isSame(date,'day');
+        if (!isActualDay) {
+          setTodayWeather(undefined);
+          return;
+        }
+        const answer = await weatherService.getWeatherByCityId(city);
+        if (answer && answer.weather) {
+          setTodayWeather(answer.weather[0].main);
+        }
+      }
+    }
+    fecthWeather();
+  }, [city, date]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -98,7 +107,11 @@ function ReminderForm(props) {
             </Select>
           )}
         </Form.Item>
-        <div className={classes.weatherContainer}>Weather : Rany </div>
+        {todayWeather && (
+          <div className={classes.weatherContainer}>
+            Weather : {todayWeather}{" "}
+          </div>
+        )}
       </div>
       <div className={clsx(classes.formSection, classes.colorContainer)}>
         <div className={classes.select}> Select a color :</div>
