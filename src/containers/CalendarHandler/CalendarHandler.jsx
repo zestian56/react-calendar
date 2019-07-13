@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
+import { Modal } from "antd";
 
+import ReminderForm from "../../components/ReminderForm/ReminderForm";
 import Calendar from "../../components/Calendar/Calendar";
 import { calendarActions } from "../../store/calendar";
-import { Modal } from "antd";
-import ReminderForm from "../../components/ReminderForm/ReminderForm";
 import {
   addReminder,
   editReminder,
   deleteReminder
 } from "../../store/calendar/actions";
+
 
 export default function CalendarHandler() {
   const { activeDate, reminders } = useSelector(state => state.calendar);

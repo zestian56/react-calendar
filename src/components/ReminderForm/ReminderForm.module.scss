@@ -3,13 +3,13 @@
     .formSection {
         display: flex;
         width: 100%;
-        &>:last-child {
-            margin-left: 10px;
-        }
         .select {
             flex-basis: 50%;
             flex-shrink: 1;
             padding-right: 23px;
+        }
+        .weatherContainer {
+            margin-top: 8px;
         }
     }
     .colorContainer {

@@ -11,14 +11,14 @@ export function getDayOfLastMonthFromLast(date, indexToSubstract) {
     const day = moment(date)
         .subtract(1, "months")
         .endOf("month")
-        .subtract(indexToSubstract, "days")
+        .subtract(indexToSubstract, "days");
     return day;
 }
 export function getDayOfNextMonthFromStart(date, indexToAdd) {
     const day = moment(date)
         .add(1, "months")
         .startOf("month")
-        .add(indexToAdd, "days")
+        .add(indexToAdd, "days");
     return day;
 }
 
@@ -28,7 +28,7 @@ export function getWeekDays() {
 }
 
 export function getMonthAndYear(date) {
-    return moment(date).format("MMMM YYYY")
+    return moment(date).format("MMMM YYYY");
 }
 
 export function getDaysInMonth(date) {
@@ -37,6 +37,12 @@ export function getDaysInMonth(date) {
 }
 
 export function getDayInMonth(date, dayIndex) {
-    const dayInMonth = moment(date).startOf("month").add(dayIndex, "days");
+    const dayInMonth = moment(date)
+        .startOf("month")
+        .add(dayIndex, "days");
     return dayInMonth;
+}
+
+export function getHourInMilitaryTime(hour) {
+    return +moment(hour, "HH:mm:ss").format("hhmmss");
 }

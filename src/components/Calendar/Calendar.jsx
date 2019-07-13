@@ -11,7 +11,8 @@ import {
   getDayOfLastMonthFromLast,
   getDayOfNextMonthFromStart,
   getMonthAndYear,
-  getDayInMonth
+  getDayInMonth,
+  getHourInMilitaryTime
 } from "../../utils/date";
 
 import classes from "./Calendar.module.scss";
@@ -44,16 +45,21 @@ function Calendar(props) {
         className={clsx(classes.monthCol, classes.reminderCol)}
         key={`reminder-${day.format("DD-MM")}-${key}`}
       >
-        {dayReminders.map((r, rKey) => (
-          <div
-            className={clsx(classes.reminder)}
-            style={{ backgroundColor: r.color }}
-            key={`reminders-${rKey}`}
-            onClick={() => onReminderClick(r)}
-          >
-            {r.text}
-          </div>
-        ))}
+        {dayReminders
+          .sort(
+            (r1, r2) =>
+              getHourInMilitaryTime(r1.hour) - getHourInMilitaryTime(r2.hour)
+          )
+          .map((r, rKey) => (
+            <div
+              className={clsx(classes.reminder)}
+              style={{ backgroundColor: r.color }}
+              key={`reminders-${rKey}`}
+              onClick={() => onReminderClick(r)}
+            >
+              {`${r.hour} - ${r.text}`}
+            </div>
+          ))}
       </div>
     );
   }
@@ -164,7 +170,7 @@ Calendar.propTypes = {
   onBackClick: PropTypes.func,
   reminders: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
+      id: PropTypes.number,
       date: PropTypes.string,
       hour: PropTypes.string,
       color: PropTypes.string,

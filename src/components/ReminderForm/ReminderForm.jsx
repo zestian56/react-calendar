@@ -14,6 +14,19 @@ const cities = [
   {
     value: "jamundi",
     label: "Jamundi"
+  },
+  {
+    value: "palmira",
+    label: "Palmira"
+  },
+
+  {
+    value: "medellin",
+    label: "Medellín"
+  },
+  {
+    value: "bogota",
+    label: "Bogóta"
   }
 ];
 
@@ -49,7 +62,7 @@ function ReminderForm(props) {
             rules: [{ required: true, message: "Please input a date!" }]
           })(<DatePicker />)}
         </Form.Item>
-        <Form.Item>
+        <Form.Item style={{ marginLeft: "10px" }}>
           {getFieldDecorator("hour", {
             initialValue: reminder.hour
               ? moment(reminder.hour, "HH:mm:ss")
@@ -61,7 +74,13 @@ function ReminderForm(props) {
       <Form.Item>
         {getFieldDecorator("text", {
           initialValue: reminder.text || "",
-          rules: [{ required: true, message: "Please write a description!" },{max: 30, message: "Description cant be longer than 30 characters"}]
+          rules: [
+            { required: true, message: "Please write a description!" },
+            {
+              max: 30,
+              message: "Description cant be longer than 30 characters"
+            }
+          ]
         })(<Input type="text" placeholder="Description" />)}
       </Form.Item>
       <div className={classes.formSection}>
@@ -79,7 +98,7 @@ function ReminderForm(props) {
             </Select>
           )}
         </Form.Item>
-        <div className={classes.weatherContainer}> </div>
+        <div className={classes.weatherContainer}>Weather : Rany </div>
       </div>
       <div className={clsx(classes.formSection, classes.colorContainer)}>
         <div className={classes.select}> Select a color :</div>

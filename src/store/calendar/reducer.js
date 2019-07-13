@@ -3,22 +3,15 @@ import moment from "moment";
 
 const initialState = {
     activeDate: moment(),
-    reminders: [{
-        id: "0",
-        date: "01-07-19",
-        hour: "05:30:00",
-        color: "#f44336",
-        city: "cali",
-        text: "Recordar bailar"
-    }]
+    reminders: []
 };
 
 const updateReminder = (state, reminderToUpdate) => {
     const newReminders = [...state.reminders];
-    const reminderIndex = newReminders.findIndex(r => r.id === reminderToUpdate.id);
+    const reminderIndex = newReminders.findIndex(
+        r => r.id === reminderToUpdate.id
+    );
     newReminders[reminderIndex] = reminderToUpdate;
-
-    console.log(newReminders, reminderToUpdate, reminderIndex)
     return {...state, reminders: newReminders };
 };
 
@@ -28,7 +21,8 @@ const deleteReminder = (state, reminderId) => {
 };
 
 const addReminder = (state, reminder) => {
-    const newReminders = [...state.reminders, reminder];
+    const newReminder = {...reminder, id: Math.random() * 10000 };
+    const newReminders = [...state.reminders, newReminder];
     return {
         ...state,
         reminders: newReminders
