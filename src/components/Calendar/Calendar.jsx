@@ -174,7 +174,7 @@ Calendar.propTypes = {
       date: PropTypes.string,
       hour: PropTypes.string,
       color: PropTypes.string,
-      city: PropTypes.string,
+      city: PropTypes.number,
       text: PropTypes.string
     })
   ),

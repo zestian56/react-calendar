@@ -18,38 +18,37 @@ function ReminderForm(props) {
     onCancelClick,
     onDeleteClick,
     onSubmit,
-    form: {
-      getFieldDecorator,
-      validateFieldsAndScroll,
-      resetFields,
-      getFieldValue
-    }
+    form: { getFieldDecorator, validateFieldsAndScroll, getFieldValue }
   } = props;
 
   const [todayWeather, setTodayWeather] = useState(undefined);
-  const city = getFieldValue("city");
-  const date = getFieldValue("date");
 
-  useEffect(() => {
-    resetFields();
-  }, [reminder, resetFields]);
+  let city = getFieldValue("city");
+  let date = getFieldValue("date");
 
-  useEffect(() => {
-    async function fecthWeather() {
-      if (city && date) {
-        const actualDate = moment();
-        const isActualDay = actualDate.isSame(date,'day');
-        if (!isActualDay) {
-          setTodayWeather(undefined);
-          return;
-        }
-        const answer = await weatherService.getWeatherByCityId(city);
-        if (answer && answer.weather) {
-          setTodayWeather(answer.weather[0].main);
-        }
+  async function fecthWeather(_city, _date) {
+    if (_city && _date) {
+      const actualDate = moment();
+      const isActualDay = actualDate.isSame(moment(_date, "DD-MM-YY"), "day");
+      if (!isActualDay) {
+        setTodayWeather(undefined);
+        return;
+      }
+      const answer = await weatherService.getWeatherByCityId(_city);
+      if (answer && answer.weather) {
+        setTodayWeather(answer.weather[0].main);
       }
     }
-    fecthWeather();
+  }
+
+  useEffect(() => {
+    if (!reminder.new) {
+      fecthWeather(reminder.city, reminder.date);
+    }
+  }, [reminder]);
+
+  useEffect(() => {
+    fecthWeather(city, date);
   }, [city, date]);
 
   function handleSubmit(e) {

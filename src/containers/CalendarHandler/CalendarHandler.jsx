@@ -78,7 +78,7 @@ export default function CalendarHandler() {
         onAddReminder={handleAddReminder}
         onReminderClick={handleReminderClick}
       />
-      <Modal
+      {showReminderModal && <Modal
         centered
         visible={showReminderModal}
         title={activeReminder.new ? "New Reminder" : "Edit reminder"}
@@ -91,7 +91,7 @@ export default function CalendarHandler() {
           onCancelClick={handleCancelModal}
           onSubmit={handleReminderFormSubmit}
         />
-      </Modal>
+      </Modal>}
     </>
   );
 }
